@@ -6,7 +6,7 @@ import javax.net.ssl.SSLServerSocket;
 */
 import java.net.Socket;
 import java.net.ServerSocket;
-import com.gdzie.znajde.server.ClientThread;
+import com.gdzie.znajde.model.CommModel;
 
 public class Server implements Runnable {
 	private Socket socket;
