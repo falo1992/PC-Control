@@ -1,4 +1,5 @@
 package com.gdzie.znajde.server;
+
 import java.net.Socket;
 
 public class ClientThread extends Thread {
@@ -11,6 +12,6 @@ public class ClientThread extends Thread {
 	}
 	@Override
 	public void run(){
-
+		ShutDown.shutDown();
 	}
 }
