@@ -1,4 +1,4 @@
-package com.gdzie.znajde.server;
+package com.gdzie.znajde.server.type;
 
 import com.sun.jna.Library;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
