@@ -1,5 +1,7 @@
 package com.gdzie.znajde.server;
 
+import com.gdzie.znajde.server.type.IAdvapi32;
+import com.gdzie.znajde.server.type.IUser32;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES;
@@ -7,7 +9,7 @@ import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinDef;
 
-public class ShutDown {
+public class PowerManagment {
 	public static boolean shutDown(){
 		HANDLEByReference hToken = new HANDLEByReference();
 		TOKEN_PRIVILEGES tkp = new TOKEN_PRIVILEGES(1);
