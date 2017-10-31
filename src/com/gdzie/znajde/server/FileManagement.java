@@ -4,12 +4,6 @@ import java.io.*;
 import java.net.Socket;
 
 public class FileManagement {
-	
-	private static Socket socket = null;
-	FileManagement(Socket socket){
-		FileManagement.socket = socket;
-	}
-	
 	private static byte[] buffer = new byte[8192];
 	private static String previousPath = new String();
 	private static String currentPath = new String();
@@ -34,7 +28,6 @@ public class FileManagement {
 	public static String goToFolder(String folder){
 		previousPath = currentPath;
 		currentPath = currentPath+"\\"+folder;
-		
 		return listFolder(currentPath);
 	}
 	
@@ -42,17 +35,37 @@ public class FileManagement {
 		return listFolder(previousPath);
 	}
 	
-	public static boolean downloadFile(String filePath) {
+	public static boolean uploadServer(String filePath, Socket socket){
+		return false;
+	}
+	
+	public static boolean downloadServer(String filePath, Socket socket){
+		return false;
+	}
+	
+	public static boolean uploadClient(String filePath, Socket socket){
+		return false;
+	}
+	
+	public static boolean downloadClient(String filePath, Socket socket){
+		return false;
+	}
+	
+	public static boolean uploadFile(String filePath, Socket socket) {
 		try{
+			long fileSize = new File(filePath).length();
+			OutputStream os = socket.getOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(os);
+			oos.writeObject(fileSize);
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(filePath));
 			BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
 			int count = 0;
 			while( (count = in.read(buffer)) > 0 ) {
 				out.write(buffer, 0, count);
 			}
-			in.close();
 			out.flush();
-			out.close();
+			in.close();
+			System.out.println("done");
 			return true;
 		}catch (IOException e){
 			e.printStackTrace();
@@ -60,19 +73,28 @@ public class FileManagement {
 		return false;
 	}
 	
-	public static boolean uploadFile(String filePath){
+	public static boolean downloadFile(String filePath, Socket socket){
 		try{
+			InputStream is = socket.getInputStream();
+			ObjectInputStream ois = new ObjectInputStream(is);
+			Object fileSizeObj = ois.readObject();
 			BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
 			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filePath));
+			long fileSize = fileSizeObj instanceof Long ? (Long)fileSizeObj : null;
 			int count = 0;
 			while( (count = in.read(buffer)) > 0){
 				out.write(buffer, 0, count);
+				fileSize -= count;
+				if(fileSize == 0){
+					break;
+				}
+				System.out.print("#");
 			}
-			in.close();
 			out.flush();
 			out.close();
+			System.out.println("done");
 			return true;
-		} catch (IOException e){
+		} catch (Exception e){
 			e.printStackTrace();
 		}
 		return false;
@@ -86,10 +108,7 @@ public class FileManagement {
 		return false;
 	}
 	
-	public static void main(String [] args){
-		System.out.print(listFolder("."));
-		System.out.print(goToFolder(".settings"));
-		System.out.print(goToPrevious());
-		System.out.println(user);
+	public static void main(String[] args){
+		
 	}
 }

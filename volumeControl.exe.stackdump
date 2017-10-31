@@ -1,0 +1,9 @@
+Exception: STATUS_ACCESS_VIOLATION at eip=6115CEE4
+eax=00000000 ebx=0028CC20 ecx=00410000 edx=61218D40 esi=611BCE20 edi=800612B4
+ebp=0028CC08 esp=0028CA90 program=C:\Users\ZWAC0_000\Desktop\GIT\PC-Control\programs\volumeControl.exe, pid 4192, thread main
+cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
+Stack trace:
+Frame     Function  Args
+0028CC08  6115CEE4 (800612C5, 800612B4, 0028CD18, 61007A67)
+0028CD18  61007A67 (00000000, 0028CD74, 61006A60, 00000000)
+End of stack trace

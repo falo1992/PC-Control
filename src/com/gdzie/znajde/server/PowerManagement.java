@@ -1,7 +1,5 @@
 package com.gdzie.znajde.server;
 
-import java.net.Socket;
-
 import com.gdzie.znajde.server.type.IAdvapi32;
 import com.gdzie.znajde.server.type.IUser32;
 import com.sun.jna.Native;
@@ -13,14 +11,9 @@ import com.sun.jna.platform.win32.WinDef;
 
 public class PowerManagement {
 	
-	private IUser32 user32;
-	private Socket socket;
+	private static IUser32 user32;
 	
-	public PowerManagement(Socket socket) {
-		this.socket = socket;
-	}
-	
-	private boolean init() {
+	private static boolean init() {
 		HANDLEByReference hToken = new HANDLEByReference();
 		TOKEN_PRIVILEGES tkp = new TOKEN_PRIVILEGES(1);
 		WinNT.LUID luid = new WinNT.LUID();
@@ -36,20 +29,18 @@ public class PowerManagement {
 		return true;
 	}
 	
-	public boolean restart(){
+	public static boolean restart(){
 		if(init()) {
-			boolean restart = user32.ExitWindowsEx(0x00000002, 0x80000000);
-			return restart;
+			return user32.ExitWindowsEx(0x00000002, 0x80000000);
 		} else {
 			return false;
 		}
 		
 	}
 	
-	public boolean shutDown(){
+	public static boolean shutdown(){
 		if(init()) {
-			boolean shutDown = user32.ExitWindowsEx(0x00000001, 0x80000000);
-			return shutDown;
+			return user32.ExitWindowsEx(0x00000001, 0x80000000);
 		} else {
 			return false;
 		}
