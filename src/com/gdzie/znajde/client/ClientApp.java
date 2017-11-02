@@ -20,16 +20,18 @@ public class ClientApp {
 	
 	public static void main(String[] args){
 		try{
-			new Thread(new Client(socket)).start();
+			//new Thread(new Client(socket)).start();
+			connect();
 		}catch(Exception e){
 			System.err.println(e);
 		}
 	}
 	
-	public static boolean connect(SocketAddress socketAddress){
+	public static boolean connect(){
 		try{
 			setTrustStore();
 			socket = (SSLSocket) socketFactory.createSocket(socketHost, socketPort);
+			new Thread(new Client(socket)).start();
 			return true;
 		}catch(IOException e){
 			e.printStackTrace();
@@ -38,7 +40,7 @@ public class ClientApp {
 	}
 	
 	public static void setTrustStore(){
-		System.setProperty("javax.net.ssl.trustStore", "C:\\Users\\ZWAC0_000\\eclipse\\jee-neon\\eclipse\\jre\\lib\\security\\serverStore.jks");
+		System.setProperty("javax.net.ssl.trustStore", "jssecacerts");
 		System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 		socketFactory = SSLSocketFactory.getDefault();
 	}

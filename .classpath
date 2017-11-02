@@ -13,7 +13,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jna-4.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-4.4.0.jar" sourcepath="lib/jna-platform-4.4.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ZWAC0_000/Desktop/Inżynierka/com4jna.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

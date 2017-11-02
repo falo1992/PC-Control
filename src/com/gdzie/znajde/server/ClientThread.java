@@ -110,6 +110,10 @@ public class ClientThread extends Thread {
 										break;
 					case "audio video":
 										break;
+					case "get mute":	oos.writeObject("mute true");
+										break;
+					case "get volume":	oos.writeObject(VolumeManagement.getVolume());
+										break;
 				}
 			}
 		}catch(SSLException e) {

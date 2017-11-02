@@ -31,6 +31,7 @@ class Client implements Runnable {
 					break;
 				}
 			}*/
+			oos.writeObject("unmute");
 		} catch (Exception e){
 			e.printStackTrace();
 		}

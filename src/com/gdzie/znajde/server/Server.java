@@ -41,7 +41,7 @@ public class Server implements Runnable {
         try {
             keyStore = KeyStore.getInstance("JKS");
             ServerFrame.log("Initializing KeyStore");
-            keyStore.load(new FileInputStream("C:\\Users\\ZWAC0_000\\eclipse\\jee-neon\\eclipse\\jre\\lib\\security\\server.jks"), "changeit".toCharArray());
+            keyStore.load(new FileInputStream("security\\serverKeyStore"), "changeit".toCharArray());
             KeyManagerFactory kmfactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             kmfactory.init(keyStore, "changeit".toCharArray());
             KeyManager[] keymanagers =  kmfactory.getKeyManagers();
