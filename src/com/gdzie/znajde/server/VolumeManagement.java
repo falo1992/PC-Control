@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 class VolumeManagement {
+	private static boolean mute = false;
 	
 	public static boolean setVolume(double value) {
 		if(value > 1) value = 1;
@@ -83,5 +84,16 @@ class VolumeManagement {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	public static boolean getMute() {
+		return mute;
+	}
+	public static void setMute() {
+		if(mute) {
+			mute = false;
+		}else{
+			mute = true;
+		}
 	}
 }

@@ -84,12 +84,14 @@ public class ClientThread extends Thread {
 										break;
 					case "mute":		if(VolumeManagement.setVolumeMute()) {
 											ServerFrame.log("Mute succeeded");
+											VolumeManagement.setMute();
 										}else{
 											ServerFrame.log("Mute failed");
 										}
 										break;
 					case "unmute":      if(VolumeManagement.setVolumeUnmute()) {
 											ServerFrame.log("Unmute succeeded");
+											VolumeManagement.setMute();
 										}else{
 											ServerFrame.log("Unmute failed");
 										}
@@ -110,7 +112,7 @@ public class ClientThread extends Thread {
 										break;
 					case "audio video":
 										break;
-					case "get mute":	oos.writeObject("mute true");
+					case "get mute":	oos.writeObject(VolumeManagement.getMute());
 										break;
 					case "get volume":	oos.writeObject(VolumeManagement.getVolume());
 										break;
