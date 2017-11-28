@@ -119,7 +119,7 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Current volume: " + VolumeManagement.getVolume());
 										}
 										break;
-					case "video":		
+					case "video":		VideoManagement.sendVideo(socket, oos);
 										break;
 					case "audio":		
 										break;

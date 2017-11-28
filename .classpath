@@ -20,9 +20,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/ZWAC0_000/Desktop/GIT/webcam-capture-0.3.12-20171110.091508-5.jar" sourcepath="C:/Users/ZWAC0_000/Desktop/GIT/webcam-capture-0.3.12-20171110.091508-5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ZWAC0_000/Desktop/GIT/slf4j-1.7.25/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ZWAC0_000/Desktop/GIT/slf4j-1.7.25/slf4j-simple-1.7.25.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ZWAC0_000/Desktop/GIT/bridj-0.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/webcam-capture-0.3.12-20171110.091508-5.jar"/>
+	<classpathentry kind="lib" path="lib/bridj-0.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.25.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
