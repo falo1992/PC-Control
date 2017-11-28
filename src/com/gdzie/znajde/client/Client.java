@@ -2,7 +2,6 @@ package com.gdzie.znajde.client;
 
 import java.io.*;
 import javax.net.ssl.SSLSocket;
-import com.gdzie.znajde.server.FileManagement;
 
 class Client implements Runnable {
 	Client(SSLSocket socket){

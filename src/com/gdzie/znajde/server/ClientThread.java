@@ -9,7 +9,7 @@ import com.gdzie.znajde.server.gui.ServerFrame;
 public class ClientThread extends Thread {
 	private static SSLSocket socket;
 	private int i;
-	private ObjectOutputStream oos = null;
+	public ObjectOutputStream oos = null;
 	private OutputStream os = null;
 	private InputStream is = null;
 	private ObjectInputStream ois = null;
@@ -19,6 +19,14 @@ public class ClientThread extends Thread {
 	ClientThread(SSLSocket socket, int i){
 		ClientThread.socket = socket;
 		this.i = i;
+		try{
+			os = socket.getOutputStream();
+			is = socket.getInputStream();
+			ois = new ObjectInputStream(is);
+			oos = new ObjectOutputStream(os);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static Socket getSocket(){
@@ -29,18 +37,23 @@ public class ClientThread extends Thread {
 	public void run(){
 		try{
 			String filePath;
-			os = socket.getOutputStream();
-			is = socket.getInputStream();
-			ois = new ObjectInputStream(is);
-			oos = new ObjectOutputStream(os);
 			
 			while(true){
 				msgObj = ois.readObject();
 				msg = msgObj instanceof String ? (String) msgObj : null;
+				
 				switch(msg) {
+					case "get folder":	msgObj = ois.readObject();
+										filePath = msgObj instanceof String ? (String) msgObj : null;
+										if(filePath.equals("desktop")) {
+											oos.writeObject(FileManagement.listFolder(System.getProperty("user.home") + "\\Desktop"));
+										} else {
+											oos.writeObject(FileManagement.listFolder(filePath));
+										}
+										break;
 					case "download":    msgObj = ois.readObject();
 									    filePath = msgObj instanceof String ? (String) msgObj : null;
-									    if(FileManagement.uploadFile(filePath, socket)) {
+									    if(FileManagement.uploadFile(filePath, oos, socket)) {
 									    	ServerFrame.log("Upload completed");
 									    }else{
 									    	ServerFrame.log("Upload failed");
@@ -121,7 +134,8 @@ public class ClientThread extends Thread {
 		}catch(SSLException e) {
 			ServerFrame.log(e.getMessage());
 		}catch(IOException e) {
-			ServerFrame.log(e.getMessage());
+			//ServerFrame.log(e.getMessage());
+			e.printStackTrace();
 		}catch(ClassNotFoundException e) {
 			ServerFrame.log(e.getMessage());
 		}

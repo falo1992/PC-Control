@@ -2,19 +2,11 @@ package com.gdzie.znajde.server;
 
 
 import java.awt.EventQueue;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-/*import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLServerSocket;
-*/
 import java.net.*;
 import java.security.KeyStore;
 import java.security.SecureRandom;
-
-import javax.net.*;
-import javax.crypto.*;
-import javax.security.*;
 
 import com.gdzie.znajde.server.gui.ServerFrame;
 
@@ -41,7 +33,9 @@ public class Server implements Runnable {
         try {
             keyStore = KeyStore.getInstance("JKS");
             ServerFrame.log("Initializing KeyStore");
-            keyStore.load(new FileInputStream("security\\serverKeyStore"), "changeit".toCharArray());
+            InputStream keystoreStream = ClassLoader.getSystemResourceAsStream("serverKeyStore");
+            //keyStore.load(new FileInputStream("security\\serverKeyStore"), "changeit".toCharArray());
+            keyStore.load(keystoreStream, "changeit".toCharArray());
             KeyManagerFactory kmfactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             kmfactory.init(keyStore, "changeit".toCharArray());
             KeyManager[] keymanagers =  kmfactory.getKeyManagers();

@@ -4,34 +4,46 @@ import java.io.*;
 import java.net.Socket;
 
 public class FileManagement {
+	public final static String HOME      = System.getProperty("user.home");
+	public final static String DESKTOP   = HOME + "\\Desktop";
+	public final static String DOWNLOADS = HOME + "\\Downloads";
+	
 	private static byte[] buffer = new byte[8192];
 	private static String previousPath = new String();
 	private static String currentPath = new String();
-	private static String user = System.getProperty("user.name");
 	
-	public static String listFolder(String path){
-		currentPath = new String(path);
+	public static String[][] listFolder(String path){
+		currentPath = path;
 		File folder = new File(path);
 		File[] folderList = folder.listFiles();
-		StringBuilder result = new StringBuilder();
-		for(File file: folderList){
-			if(file.isDirectory()){
-				result.append("Folder\t"+file.getName()+"\n");
+		String[][] result = new String[folderList.length+1][3];
+		
+		result[0][0] = "0";
+		result[0][1] = "..";
+		result[0][2] = currentPath.substring(0, currentPath.substring(0, (currentPath.length() - 1)).lastIndexOf("\\")+1);
+		
+		for(int i = 0; i < folderList.length; i++){
+			if(folderList[i].isDirectory()){
+				result[i+1][0] = "0";
+				result[i+1][1] = folderList[i].getName();
+				result[i+1][2] = path + "\\" + result[i+1][1];
 			}else{
-				result.append("Plik\t"+file.getName()+"\n");
+				result[i+1][0] = "1";
+				result[i+1][1] = folderList[i].getName();
+				result[i+1][2] = path + "\\" + result[i+1][1];
 			}
 		}
 		
-		return result.toString();
+		return result;
 	}
 	
-	public static String goToFolder(String folder){
+	public static String[][] goToFolder(String folder){
 		previousPath = currentPath;
 		currentPath = currentPath+"\\"+folder;
 		return listFolder(currentPath);
 	}
 	
-	public static String goToPrevious(){
+	public static String[][] goToPrevious(){
 		return listFolder(previousPath);
 	}
 	
@@ -51,11 +63,9 @@ public class FileManagement {
 		return false;
 	}
 	
-	public static boolean uploadFile(String filePath, Socket socket) {
+	public static boolean uploadFile(String filePath, ObjectOutputStream oos, Socket socket) {
 		try{
 			long fileSize = new File(filePath).length();
-			OutputStream os = socket.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(os);
 			oos.writeObject(fileSize);
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(filePath));
 			BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
@@ -106,9 +116,5 @@ public class FileManagement {
 	
 	public static boolean uploadFolder(){
 		return false;
-	}
-	
-	public static void main(String[] args){
-		
 	}
 }

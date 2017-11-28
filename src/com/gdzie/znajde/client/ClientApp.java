@@ -1,6 +1,5 @@
 package com.gdzie.znajde.client;
 
-import java.awt.List;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
