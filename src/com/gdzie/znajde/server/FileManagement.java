@@ -15,7 +15,12 @@ public class FileManagement {
 	public static String[][] listFolder(String path){
 		currentPath = path;
 		File folder = new File(path);
-		File[] folderList = folder.listFiles();
+		File[] folderList = folder.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return !pathname.isHidden();
+			}
+		});
 		String[][] result = new String[folderList.length+1][3];
 		
 		result[0][0] = "0";
@@ -33,6 +38,14 @@ public class FileManagement {
 				result[i+1][2] = path + "\\" + result[i+1][1];
 			}
 		}
+		
+		java.util.Arrays.sort(result, new java.util.Comparator<String[]>() {
+			@Override
+			public int compare(String[] o1, String[] o2) {
+				
+				return o1[0].compareTo(o2[0]);
+			}
+		});
 		
 		return result;
 	}
