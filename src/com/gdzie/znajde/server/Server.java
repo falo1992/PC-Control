@@ -17,12 +17,18 @@ public class Server implements Runnable {
 		serverPort = 2000;
 		clientThread = new ClientThread[max];
 	}
+	
+	private static AudioObservable aov;
+	private static VideoObservable vov;
 	private SSLServerSocketFactory serverSocketFactory;
 	private SSLSocket socket;
 	private SSLServerSocket serverSocket;
+	private SSLServerSocket audioServerSocket;
+	private SSLServerSocket videoServerSocket;
 	private ClientThread clientThread[];
 	private int serverPort;
 	private static int max = 20;
+	
 	public void run(){
 		EventQueue.invokeLater(new Runnable() {	
 			public void run() {
@@ -34,7 +40,6 @@ public class Server implements Runnable {
             keyStore = KeyStore.getInstance("JKS");
             ServerFrame.log("Initializing KeyStore");
             InputStream keystoreStream = ClassLoader.getSystemResourceAsStream("serverKeyStore");
-            //keyStore.load(new FileInputStream("security\\serverKeyStore"), "changeit".toCharArray());
             keyStore.load(keystoreStream, "changeit".toCharArray());
             KeyManagerFactory kmfactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             kmfactory.init(keyStore, "changeit".toCharArray());
@@ -54,18 +59,27 @@ public class Server implements Runnable {
 			ServerFrame.log("Starting server");
             
 			serverSocket = (SSLServerSocket) serverSocketFactory.createServerSocket(serverPort);
+			audioServerSocket = (SSLServerSocket) serverSocketFactory.createServerSocket(3000);
+			videoServerSocket = (SSLServerSocket) serverSocketFactory.createServerSocket(4000);
 			ServerFrame.log("Server listening on port " + serverPort);
 
         }catch(Exception e){
         	e.printStackTrace();
         }
+        
+        aov = new AudioObservable();
+        vov = new VideoObservable();
+        
+        new Thread(aov).start();
+        new Thread(vov).start();
+        
 		while(true){
 			try{
 				socket = (SSLSocket) serverSocket.accept();
 				ServerFrame.log("Client connected from " + socket.getInetAddress());
 				for(int i=0;i<max;i++){
 					if(clientThread[i] == null){
-						clientThread[i] = new ClientThread(socket,i);
+						clientThread[i] = new ClientThread(socket, audioServerSocket, videoServerSocket ,i);
 						clientThread[i].start();
 						break;
 					}
@@ -76,5 +90,13 @@ public class Server implements Runnable {
 				ServerFrame.log(e.getMessage());
 			}
 		}
+	}
+	
+	public static AudioObservable getAov() {
+		return aov;
+	}
+
+	public static VideoObservable getVov() {
+		return vov;
 	}
 }

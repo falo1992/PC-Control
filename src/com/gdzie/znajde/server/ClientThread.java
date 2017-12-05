@@ -7,22 +7,36 @@ import javax.net.ssl.*;
 import com.gdzie.znajde.server.gui.ServerFrame;
 
 public class ClientThread extends Thread {
+	private AudioManagement audioManager = null;
+	private VideoManagement videoMenager = null;
+	public static boolean audioPlay = false;
+	public static boolean videoPlay = false;
 	private static SSLSocket socket;
+	private static SSLSocket audioSocket;
+	private static SSLSocket videoSocket;
+	private static SSLServerSocket audioServerSocket;
+	private static SSLServerSocket videoServerSocket;
 	private int i;
 	public ObjectOutputStream oos = null;
 	private OutputStream os = null;
+	public ObjectOutputStream audioOOS = null;
+	private OutputStream audioOS = null;
+	public ObjectOutputStream videoOOS = null;
+	private OutputStream videoOS = null;
 	private InputStream is = null;
 	private ObjectInputStream ois = null;
 	private String msg;
 	private Object msgObj;
 	
-	ClientThread(SSLSocket socket, int i){
-		ClientThread.socket = socket;
+	ClientThread(SSLSocket socket, SSLServerSocket audioSocket, SSLServerSocket videoSocket, int i){
+		ClientThread.socket      = socket;
+		ClientThread.audioServerSocket = audioSocket;
+		ClientThread.videoServerSocket = videoSocket;
 		this.i = i;
 		try{
-			os = socket.getOutputStream();
 			is = socket.getInputStream();
 			ois = new ObjectInputStream(is);
+			os = socket.getOutputStream();
 			oos = new ObjectOutputStream(os);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -31,6 +45,14 @@ public class ClientThread extends Thread {
 	
 	public static Socket getSocket(){
 		return socket;
+	}
+
+	public static Socket getAudioSocket(){
+		return audioSocket;
+	}
+
+	public static Socket getVideoSocket(){
+		return videoSocket;
 	}
 	
 	@Override
@@ -41,7 +63,7 @@ public class ClientThread extends Thread {
 			while(true){
 				msgObj = ois.readObject();
 				msg = msgObj instanceof String ? (String) msgObj : null;
-				
+
 				switch(msg) {
 					case "get folder":	msgObj = ois.readObject();
 										filePath = msgObj instanceof String ? (String) msgObj : null;
@@ -119,9 +141,19 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Current volume: " + VolumeManagement.getVolume());
 										}
 										break;
-					case "video":		VideoManagement.sendVideo(socket, oos);
+					case "video":		if(!videoPlay) { 
+											startVideoSocket();
+											videoMenager = new VideoManagement(videoOOS);
+										}
 										break;
-					case "audio":		
+					case "stop video":  Server.getVov().deleteObserver(videoMenager);
+										break;
+					case "audio":		if(!audioPlay) {
+											startAudioSocket();
+											audioManager = new AudioManagement(audioOOS);
+										}
+										break;
+					case "stop audio":  Server.getAov().deleteObserver(audioManager);
 										break;
 					case "audio video":
 										break;
@@ -138,6 +170,28 @@ public class ClientThread extends Thread {
 			e.printStackTrace();
 		}catch(ClassNotFoundException e) {
 			ServerFrame.log(e.getMessage());
+		}
+	}
+	
+	private void startAudioSocket() {
+		try{
+			audioSocket = (SSLSocket) audioServerSocket.accept();
+			audioOS = audioSocket.getOutputStream();
+			audioOOS = new ObjectOutputStream(audioOS);
+			ServerFrame.log("Audio connected");
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void startVideoSocket() {
+		try{
+			videoSocket = (SSLSocket) videoServerSocket.accept();
+			videoOS = videoSocket.getOutputStream();
+			videoOOS = new ObjectOutputStream(videoOS);
+			ServerFrame.log("Video connected");
+		}catch(IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
