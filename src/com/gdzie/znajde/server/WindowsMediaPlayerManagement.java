@@ -7,7 +7,11 @@ import java.util.Scanner;
 
 import com.gdzie.znajde.server.gui.ServerFrame;
 import com.gdzie.znajde.server.type.IUser32;
+import com.gdzie.znajde.server.type.IWMPControls;
+import com.gdzie.znajde.server.type.IWMPPlayer;
+import com.sun.jna.Function;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Ole32Util;
 import com.sun.jna.platform.win32.W32Errors;
@@ -92,12 +96,20 @@ public class WindowsMediaPlayerManagement {
 	public static void init() {
 		user32 = (IUser32) Native.loadLibrary("user32",IUser32.class); 
 		handle = user32.FindWindowA("WMPlayerApp", "Windows Media Player");
-//		PointerByReference ppv = new PointerByReference();
-//		HRESULT hr = Ole32.INSTANCE.CoCreateInstance(Ole32Util.getGUIDFromString("{6BF52A52-394A-11d3-B153-00C04F79FAA6}"), null, WTypes.CLSCTX_LOCAL_SERVER, Ole32Util.getGUIDFromString("{6BF52A4F-394A-11D3-B153-00C04F79FAA6}"), ppv);
-//		
-//		if (hr.equals(W32Errors.S_OK)) {
-//			System.out.println("Uda³o siê");
-//		}
+		
+		HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
+		if (hr.equals(W32Errors.S_OK)) {
+			System.out.println("Udalo siê");
+		}
+
+		IWMPPlayer wmp = new IWMPPlayer(null, false);
+
+//		wmp.put_url("C:\\Users\\Public\\Music\\Sample Music\\Kalimba.mp3");
+//		System.out.println(wmp.get_controls());
+//		IWMPControls wmpcontrols = new IWMPControls(null, true);
+//		wmpcontrols.play();
+//		wmp.openPlayer("C:\\Users\\Public\\Music\\Sample Music\\Sleep Away.mp3");
+//		wmp.close();
 	}
 	
 	public static boolean playPause() {
@@ -105,15 +117,17 @@ public class WindowsMediaPlayerManagement {
 	}
 	
 	public static void main(String[] args) {
-		runWMPExe();
+//		if (!isRunning()) {
+//			runWMPExe();			
+//		}
 		init();
-		Scanner scanner = new Scanner(System.in);
-		
-		while(true) {
-			String line = scanner.nextLine();
-			if(line.equals("1")) {
-				playPause();
-			}
-		}
+//		Scanner scanner = new Scanner(System.in);
+//		
+//		while(true) {
+//			String line = scanner.nextLine();
+//			if(line.equals("1")) {
+//				playPause();
+//			}
+//		}
 	}
 }
