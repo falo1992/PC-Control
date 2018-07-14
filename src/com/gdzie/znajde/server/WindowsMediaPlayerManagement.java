@@ -1,29 +1,29 @@
 package com.gdzie.znajde.server;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Scanner;
 
 import com.gdzie.znajde.server.gui.ServerFrame;
 import com.gdzie.znajde.server.type.IUser32;
-import com.gdzie.znajde.server.type.IWMPControls;
 import com.gdzie.znajde.server.type.IWMPPlayer;
-import com.sun.jna.Function;
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Ole32;
-import com.sun.jna.platform.win32.Ole32Util;
-import com.sun.jna.platform.win32.W32Errors;
-import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.ptr.PointerByReference;
 
 public class WindowsMediaPlayerManagement {
-	private static HWND handle;
+	public static HWND handle;
 	private static IUser32 user32;
 	private static String wmplayerExe = null;
+	static IWMPPlayer wmp;
 	
 	static class Finder extends SimpleFileVisitor<Path> {
 		private final PathMatcher matcher;
@@ -93,41 +93,80 @@ public class WindowsMediaPlayerManagement {
 		return isRunning();
 	}
 	
-	public static void init() {
+	public static void findWindow() {
 		user32 = (IUser32) Native.loadLibrary("user32",IUser32.class); 
-		handle = user32.FindWindowA("WMPlayerApp", "Windows Media Player");
 		
-		HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-		if (hr.equals(W32Errors.S_OK)) {
-			System.out.println("Udalo siê");
+		Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
+		
+		handle = user32.FindWindowA("WMPlayerApp", "Windows Media Player");
+	}
+	
+	public static void init(String filePath) {
+		wmp = new IWMPPlayer(null, false);
+		wmp.openPlayer(filePath);
+		
+		while(handle == null) {
+			findWindow();
 		}
-
-		IWMPPlayer wmp = new IWMPPlayer(null, false);
-
-//		wmp.put_url("C:\\Users\\Public\\Music\\Sample Music\\Kalimba.mp3");
-//		System.out.println(wmp.get_controls());
-//		IWMPControls wmpcontrols = new IWMPControls(null, true);
-//		wmpcontrols.play();
-//		wmp.openPlayer("C:\\Users\\Public\\Music\\Sample Music\\Sleep Away.mp3");
-//		wmp.close();
 	}
 	
-	public static boolean playPause() {
-		return user32.SendMessageA(handle, IUser32.WM_COMMAND, 0x00004978, 0x00000000);
+	public static void sendMessage(int command) {
+		if (handle == null) {
+			findWindow();
+		}
+		user32.SendMessageA(handle, IUser32.WM_COMMAND, command, 0x00000000);
 	}
 	
-	public static void main(String[] args) {
-//		if (!isRunning()) {
-//			runWMPExe();			
-//		}
-		init();
-//		Scanner scanner = new Scanner(System.in);
-//		
-//		while(true) {
-//			String line = scanner.nextLine();
-//			if(line.equals("1")) {
-//				playPause();
-//			}
-//		}
+	public static void playPause() {
+		sendMessage(0x00004978);
+	}
+	
+	public static void volumeUp() {
+		sendMessage(0x0001497F);
+	}
+	
+	public static void volumeDown() {
+		sendMessage(0x00014980);
+	}
+	
+	public static void mute() {
+		sendMessage(0x00014981);
+	}
+	
+	public static void close() {
+		sendMessage(0x0000E102);
+	}
+	
+	public static void next() {
+		sendMessage(0x0000497B);
+	}
+	
+	public static void previous() {
+		sendMessage(0x0000497A);
+	}
+	
+	public static void shuffle() {
+		sendMessage(0x0001499A);
+	}
+	
+	public static void repeat() {
+		sendMessage(0x0001499B);
+	}
+	
+	public static void stop() {
+		sendMessage(0x00014979);
+	}
+	
+	public static void fullscreen() {
+		sendMessage(0x00004968);
+		sendMessage(0x0000495E);
+	}
+	
+	public static void libraryView() {
+		sendMessage(0x0001495C);
+	}
+	
+	public static void playerView() {
+		sendMessage(0x00004968);
 	}
 }

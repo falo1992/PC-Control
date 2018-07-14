@@ -73,6 +73,7 @@ public class ClientThread extends Thread {
 											oos.writeObject(FileManagement.listFolder(filePath));
 										}
 										break;
+										
 					case "download":    msgObj = ois.readObject();
 									    filePath = msgObj instanceof String ? (String) msgObj : null;
 									    if(FileManagement.uploadFile(filePath, oos, socket)) {
@@ -81,6 +82,7 @@ public class ClientThread extends Thread {
 									    	ServerFrame.log("Upload failed");
 									    }
 									    break;
+									    
 					case "upload":      msgObj = ois.readObject();
 										filePath = msgObj instanceof String ? (String) msgObj : null;
 										if(FileManagement.downloadFile(filePath, socket)) {
@@ -89,18 +91,21 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Download failed");
 										}
 										break;
+										
 					case "shutdown":    if(PowerManagement.shutdown()) {
 											ServerFrame.log("Shutdown succeeded");
 										}else{
 											ServerFrame.log("Shutdown failed");
 										}
 									    break;
+									    
 					case "restart":     if(PowerManagement.restart()) {
 											ServerFrame.log("Restart succeeded");
 										}else{
 											ServerFrame.log("Restart failed");
 										}
 									    break;
+									    
 					case "volume up":   if (VolumeManagement.setVolumeUp()) {
 											ServerFrame.log("Volume up succeeded");
 											ServerFrame.log("Current volume: " + VolumeManagement.getVolume());
@@ -109,6 +114,7 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Current volume: " + VolumeManagement.getVolume());
 										}
 										break;
+										
 					case "volume down": if(VolumeManagement.setVolumeDown()) {
 											ServerFrame.log("Volume down succeeded");
 											ServerFrame.log("Current volume: " + VolumeManagement.getVolume());
@@ -117,6 +123,7 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Current volume: " + VolumeManagement.getVolume());
 										}
 										break;
+										
 					case "mute":		if(VolumeManagement.setVolumeMute()) {
 											ServerFrame.log("Mute succeeded");
 											VolumeManagement.setMute();
@@ -124,6 +131,7 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Mute failed");
 										}
 										break;
+										
 					case "unmute":      if(VolumeManagement.setVolumeUnmute()) {
 											ServerFrame.log("Unmute succeeded");
 											VolumeManagement.setMute();
@@ -131,6 +139,7 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Unmute failed");
 										}
 										break;
+										
 					case "set volume":  msgObj = ois.readObject();
 										double value = msgObj instanceof Double ? (Double) msgObj : 0;
 										if(VolumeManagement.setVolume(value)) {
@@ -141,25 +150,73 @@ public class ClientThread extends Thread {
 											ServerFrame.log("Current volume: " + VolumeManagement.getVolume());
 										}
 										break;
+										
 					case "video":		if(!videoPlay) { 
 											startVideoSocket();
 											videoMenager = new VideoManagement(videoOOS);
 										}
 										break;
+										
 					case "stop video":  Server.getVov().deleteObserver(videoMenager);
 										break;
+										
 					case "audio":		if(!audioPlay) {
 											startAudioSocket();
 											audioManager = new AudioManagement(audioOOS);
 										}
 										break;
+										
 					case "stop audio":  Server.getAov().deleteObserver(audioManager);
 										break;
+										
 					case "audio video":
 										break;
+										
 					case "get mute":	oos.writeObject(VolumeManagement.getMute());
 										break;
+										
 					case "get volume":	oos.writeObject(VolumeManagement.getVolume());
+										break;
+										
+					case "open player": msgObj = ois.readObject();
+										String wmpFilePath = msgObj instanceof String ? (String) msgObj : "";
+										WindowsMediaPlayerManagement.init(wmpFilePath);
+										break;
+										
+					case "next":		WindowsMediaPlayerManagement.next();
+										break;
+										
+					case "previous":	WindowsMediaPlayerManagement.previous();
+										break;
+										
+					case "fullscreen":	WindowsMediaPlayerManagement.fullscreen();
+										break;
+										
+					case "wmp mute":	WindowsMediaPlayerManagement.mute();
+										break;
+										
+					case "wmp v_up":	WindowsMediaPlayerManagement.volumeUp();
+										break;
+										
+					case "wmp v_down":	WindowsMediaPlayerManagement.volumeDown();
+										break;
+										
+					case "wmp shuffle": WindowsMediaPlayerManagement.shuffle();
+										break;
+										
+					case "wmp repeat":	WindowsMediaPlayerManagement.repeat();
+										break;
+										
+					case "wmp play":	WindowsMediaPlayerManagement.playPause();
+										break;
+										
+					case "wmp stop":	WindowsMediaPlayerManagement.stop();
+										break;
+
+					case "wmp library": WindowsMediaPlayerManagement.libraryView();
+										break;
+										
+					case "wmp player":  WindowsMediaPlayerManagement.playerView();
 										break;
 				}
 			}
@@ -170,6 +227,8 @@ public class ClientThread extends Thread {
 			e.printStackTrace();
 		}catch(ClassNotFoundException e) {
 			ServerFrame.log(e.getMessage());
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
