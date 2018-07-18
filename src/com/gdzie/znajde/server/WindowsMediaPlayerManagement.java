@@ -93,15 +93,21 @@ public class WindowsMediaPlayerManagement {
 		return isRunning();
 	}
 	
-	public static void findWindow() {
+	public static void CoInitialize() {
 		user32 = (IUser32) Native.loadLibrary("user32",IUser32.class); 
 		
 		Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
+	}
+	
+	public static void findWindow() {
+		CoInitialize();
 		
 		handle = user32.FindWindowA("WMPlayerApp", "Windows Media Player");
 	}
 	
 	public static void init(String filePath) {
+		CoInitialize();
+		
 		wmp = new IWMPPlayer(null, false);
 		wmp.openPlayer(filePath);
 		
