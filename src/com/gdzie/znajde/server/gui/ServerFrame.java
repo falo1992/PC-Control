@@ -43,7 +43,7 @@ public class ServerFrame extends JFrame {
 	}
 	
 	public void initTray() {
-		Image image = Toolkit.getDefaultToolkit().getImage("icon\\icon.jpg");
+		Image image = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("icon.jpg"));
 		TrayIcon trayIcon = new TrayIcon(image);
 		SystemTray tray = SystemTray.getSystemTray();
 		PopupMenu popup = new PopupMenu();

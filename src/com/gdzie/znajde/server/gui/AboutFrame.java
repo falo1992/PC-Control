@@ -24,11 +24,7 @@ public class AboutFrame extends JFrame {
 	
 	public AboutFrame(int x, int y) {
 		super("About PC-Control");
-		try {
-			scanner = new Scanner(new File("doc/About.txt"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		scanner = new Scanner(ClassLoader.getSystemResourceAsStream("About.txt"));
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override
