@@ -44,7 +44,7 @@ RequestExecutionLevel user
 
 
 !define SRC_FILE "target\PC-Control.exe"
-!define SRC_FILE2 "volumeControl.exe"
+!define SRC_FILE2 "src\main\resources\volumeControl.exe"
 !define PROGRAM_NAME "PC-Control.exe"
 
 
